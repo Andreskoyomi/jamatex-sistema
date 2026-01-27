@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jamatex - Gestión de Usuarios</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard">
+        <aside class="sidebar">
+            <div class="logo">JAMATEX</div>
+            <nav>
+                <ul>
+                    <li><i class="fas fa-box"></i> Catálogo</li>
+                    <li><i class="fas fa-warehouse"></i> Inventarios</li>
+                    <li class="active"><i class="fas fa-users"></i> Gestión de usuarios</li>
+                    <li><i class="fas fa-file-alt"></i> Reportes</li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="content">
+            <header>
+                <h1><i class="fas fa-home"></i> Gestión de Usuarios</h1>
+            </header>
+
+            <section class="stats">
+                <div class="card"><h3>Total Usuarios</h3><p id="total-count">0</p></div>
+                <div class="card active-users"><h3>Usuarios Activos</h3><p id="active-count">0</p></div>
+                <div class="card inactive-users"><h3>Inactivos</h3><p id="inactive-count">0</p></div>
+            </section>
+
+            <section class="table-container">
+                <div class="table-actions">
+                    <button class="btn-primary" onclick="mostrarModal()"><i class="fas fa-plus"></i> Agregar Usuario</button>
+                    <input type="text" placeholder="Buscar en la tabla..." id="search">
+                </div>
+
+                <table id="user-table">
+                    <thead>
+                        <tr>
+                            <th>Nombre Completo</th>
+                            <th>Email</th>
+                            <th>Rol</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="user-list">
+                        </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <h2 id="modalTitle">Nuevo Usuario</h2>
+            <form id="userForm">
+                <input type="hidden" id="userId">
+                <input type="text" id="nombre" placeholder="Nombre completo" required>
+                <input type="email" id="correo" placeholder="Email" required>
+                <input type="password" id="contrasena" placeholder="Contraseña">
+                <select id="rol">
+                    <option value="Administrador">Administrador</option>
+                    <option value="Supervisor">Supervisor</option>
+                    <option value="Almacenista">Almacenista</option>
+                </select>
+                <select id="estado">
+                    <option value="1">Activo</option>
+                    <option value="0">Inactivo</option>
+                </select>
+                <div class="modal-buttons">
+                    <button type="submit" class="btn-save">Guardar</button>
+                    <button type="button" class="btn-cancel" onclick="cerrarModal()">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
