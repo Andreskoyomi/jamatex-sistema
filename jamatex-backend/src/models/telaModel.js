@@ -22,17 +22,18 @@ class Tela {
         }
     }
 
-    // Método para obtener todas las telas (Necesario para la tabla inicial)
+    // --- CORRECCIÓN AQUÍ: Quitamos el WHERE estado = 1 ---
     static async obtenerTodas() {
         try {
-            const [filas] = await db.query('SELECT * FROM tela WHERE estado = 1');
+            // Ahora traemos TODO para que el Frontend (React) decida qué mostrar
+            const [filas] = await db.query('SELECT * FROM tela');
             return filas;
         } catch (error) {
             throw error;
         }
     }
 
-    // Método para buscar una tela por su ID (Para que coincida con obtenerPorId del controlador)
+    // Método para buscar una tela por su ID
     static async obtenerPorId(id) {
         try {
             const [filas] = await db.query('SELECT * FROM tela WHERE id_tela = ?', [id]);
@@ -45,14 +46,15 @@ class Tela {
     // Método para actualizar una tela existente
     static async actualizar(id_tela, datosTela) {
         try {
-            const { material, color, diseno, metros_disponibles, ancho, ubicacion, estado } = datosTela;
+            // Agregamos 'codigo' por si decides editarlo también desde el modal
+            const { codigo, material, color, diseno, metros_disponibles, ancho, ubicacion, estado } = datosTela;
             const query = `
                 UPDATE tela
-                SET material = ?, color = ?, diseno = ?, metros_disponibles = ?, ancho = ?, ubicacion = ?, estado = ?
+                SET codigo = ?, material = ?, color = ?, diseno = ?, metros_disponibles = ?, ancho = ?, ubicacion = ?, estado = ?
                 WHERE id_tela = ?
             `;
             const [resultado] = await db.query(query, [
-                material, color, diseno, metros_disponibles, ancho, ubicacion, estado, id_tela
+                codigo, material, color, diseno, metros_disponibles, ancho, ubicacion, estado, id_tela
             ]);
             return resultado;
         } catch (error) {
@@ -60,10 +62,9 @@ class Tela {
         }
     }
 
-    // Método para eliminar tela (deja inactivo)
+    // Método para eliminar tela (Desactiva el registro)
     static async eliminar(id_tela) {
         try {
-            // Usamos 0 para representar INACTIVO según tipo de dato tinyint
             const query = 'UPDATE tela SET estado = 0 WHERE id_tela = ?';
             const [resultado] = await db.query(query, [id_tela]);
             return resultado;

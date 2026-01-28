@@ -2,13 +2,13 @@
 export default {
   content: [
     "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
+    "./src/**/*.{js,ts,jsx,tsx}", // Esta línea permite que Tailwind busque estilos en subcarpetas
   ],
   theme: {
     extend: {
-      colors: {
-        'jamatex-blue': '#1e40af', // Un azul profesional para tu marca
-      }
+      fontFamily: {
+        montserrat: ['Montserrat', 'sans-serif'],
+      },
     },
   },
   plugins: [],
