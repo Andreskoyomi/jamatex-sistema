@@ -1,22 +1,28 @@
+//Importación de herramientas de React y estilos
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from 'axios'; // Librería para conectar con el servidor (API)
 
 const ModuloUsuarios = () => {
-  const [usuarios, setUsuarios] = useState([]);
-  const [busqueda, setBusqueda] = useState('');
-  const [verDesactivados, setVerDesactivados] = useState(false);
+  // ESTADOS GLOBALES 
+  const [usuarios, setUsuarios] = useState([]); // Lista completa de usuarios desde la DB
+  const [busqueda, setBusqueda] = useState(''); // Término de búsqueda para el filtro
+  const [verDesactivados, setVerDesactivados] = useState(false); // Switch entre vista Activos / Inactivos
   
+  // ESTADOS PARA MODALES 
   const [mostrarModalCrear, setMostrarModalCrear] = useState(false);
   const [mostrarModalEditar, setMostrarModalEditar] = useState(false);
-  const [usuarioSeleccionado, setUsuarioSeleccionado] = useState(null);
+  const [usuarioSeleccionado, setUsuarioSeleccionado] = useState(null); // Usuario que se está editando
 
-  // ESTADO CORREGIDO: contrasena (sin ñ)
+  // ESTADO PARA NUEVO USUARIO 
+  // Nota: Se usa 'contrasena' sin Ñ para evitar errores de codificación en el backend/DB
   const [nuevoUsuario, setNuevoUsuario] = useState({
     nombre: '', correo: '', contrasena: '', rol: 'Auxiliar de Bodega', estado: 1
   });
 
+  // Carga inicial de datos al montar el componente
   useEffect(() => { obtenerUsuarios(); }, []);
 
+  // Función para traer todos los usuarios de la API
   const obtenerUsuarios = async () => {
     try {
       const respuesta = await axios.get('http://localhost:3000/usuarios');
@@ -26,6 +32,7 @@ const ModuloUsuarios = () => {
     }
   };
 
+  // Lógica para registrar un usuario nuevo (POST)
   const manejarRegistro = async (e) => {
     e.preventDefault();
     try {
@@ -41,6 +48,7 @@ const ModuloUsuarios = () => {
     }
   };
 
+  // Lógica para actualizar datos de un usuario existente (PUT)
   const manejarEdicion = async (e) => {
     e.preventDefault();
     try {
@@ -51,6 +59,8 @@ const ModuloUsuarios = () => {
     } catch (error) { alert("Error al actualizar usuario"); }
   };
 
+  // LÓGICA DE BORRADO LÓGICO: 
+  // No elimina el registro de la DB, solo cambia su 'estado' (0 = Inactivo, 1 = Activo)
   const cambiarEstadoUsuario = async (u, nuevoEstado) => {
     const accion = nuevoEstado === 1 ? 'reactivar' : 'desactivar';
     if (window.confirm(`¿Seguro que quieres ${accion} a ${u.nombre}?`)) {
@@ -64,6 +74,8 @@ const ModuloUsuarios = () => {
     }
   };
 
+  // FILTRADO DE LA LISTA 
+  // Filtra por: 1. Estado (Activo/Inactivo) y 2. Búsqueda por nombre o correo
   const usuariosFiltrados = usuarios.filter(u => {
     const estadoMatch = verDesactivados ? Number(u.estado) === 0 : Number(u.estado) === 1;
     const term = busqueda.toLowerCase().trim();
@@ -73,6 +85,7 @@ const ModuloUsuarios = () => {
     );
   });
 
+  // Estilos visuales según el rol asignado
   const getRolStyle = (rol) => {
     switch (rol) {
       case 'Administrador': return 'bg-slate-800 text-white';
@@ -82,6 +95,7 @@ const ModuloUsuarios = () => {
     }
   };
 
+  //INTERFAZ VISUAL (JSX)
   return (
     <div className="animate-in fade-in duration-500">
       {/* CABECERA */}

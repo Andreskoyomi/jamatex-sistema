@@ -1,5 +1,6 @@
+//Importación de herramientas de React y estilos
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from 'axios'; // Librería para conectar con el servidor (API)
 
 const ModuloTelas = () => {
   // 1. ESTADOS
@@ -7,12 +8,12 @@ const ModuloTelas = () => {
   const [busqueda, setBusqueda] = useState('');
   const [verDesactivados, setVerDesactivados] = useState(false);
   
-  // Modales
+  // Modales (Control de ventanas emergentes)
   const [mostrarModalDescuento, setMostrarModalDescuento] = useState(false);
   const [mostrarModalCrear, setMostrarModalCrear] = useState(false);
   const [mostrarModalEditar, setMostrarModalEditar] = useState(false);
 
-  // Selecciones
+  // Estados para manejar la selección y edición
   const [telaSeleccionada, setTelaSeleccionada] = useState(null);
   const [metrosADescontar, setMetrosADescontar] = useState('');
 
@@ -22,8 +23,11 @@ const ModuloTelas = () => {
     metros_disponibles: '', ancho: '', ubicacion: '', estado: 1
   });
 
+  //EFECTOS Y FUNCIONES DE CARGA
+// useEffect: Se ejecuta una sola vez cuando se abre el módulo
   useEffect(() => { obtenerTelas(); }, []);
 
+  // Función para traer los datos desde la base de datos (vía API)
   const obtenerTelas = async () => {
     try {
       const respuesta = await axios.get('http://localhost:3000/telas');
@@ -33,7 +37,8 @@ const ModuloTelas = () => {
     }
   };
 
-  // FUNCIONES DE GESTIÓN
+  // FUNCIONES DE GESTIÓN (CRUD)
+  // BORRADO LÓGICO: Cambia el estado de 1 (Activo) a 0 (Inactivo) o viceversa
   const cambiarEstadoTela = async (tela, nuevoEstado) => {
     const accion = nuevoEstado === 1 ? 'reactivar' : 'desactivar';
     if (window.confirm(`¿Seguro que quieres ${accion} la tela ${tela.codigo}?`)) {
@@ -47,6 +52,7 @@ const ModuloTelas = () => {
     }
   };
 
+  // ACTUALIZAR: Envía los cambios realizados en el modal de edición
   const manejarEdicion = async (e) => {
     e.preventDefault();
     try {
@@ -57,6 +63,7 @@ const ModuloTelas = () => {
     } catch (error) { alert("Error al actualizar"); }
   };
 
+  // GESTIÓN DE INVENTARIO: Resta metros del stock actual
   const manejarDescuento = async (e) => {
     e.preventDefault();
     const descuento = parseFloat(metrosADescontar);
@@ -74,6 +81,7 @@ const ModuloTelas = () => {
     } catch (error) { alert("Error al descontar stock"); }
   };
 
+  // REGISTRAR: Crea una nueva tela en la base de datos
   const manejarRegistro = async (e) => {
     e.preventDefault();
     try {
@@ -95,6 +103,8 @@ const ModuloTelas = () => {
     return estadoMatch && buscaMatch;
   });
 
+
+  //INTERFAZ VISUAL (JSX)
   return (
     <div className="animate-in fade-in duration-500">
       {/* CABECERA */}
