@@ -1,6 +1,8 @@
 const express = require("express");
 const cors = require("cors"); //  Importamos la librería
 const db = require('./database/db');
+const authRoutes = require('./routes/authRoutes');
+
 
 // 1. Importar las rutas 
 const usuarioRoutes = require('./routes/usuarioRoutes');
@@ -23,6 +25,8 @@ app.get("/", (req, res) => {
 //Conectar las rutas de usuarios
 app.use('/usuarios', usuarioRoutes);
 app.use('/telas', telaRoutes);
+app.use('/auth', authRoutes);
+
 
 //Levantar servidor
 app.listen(PORT, () => {

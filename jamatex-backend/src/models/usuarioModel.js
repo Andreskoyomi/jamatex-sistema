@@ -39,6 +39,18 @@ class Usuario {
             throw error;
         }
     }
+// Método para obtener usuario por correo (para loghin)
+    static async obtenerPorCorreo(correo) {
+        try {
+            const query = 'SELECT * FROM usuario WHERE correo = ?';
+            const [filas] = await db.query(query, [correo]);
+            return filas[0];
+        } catch (error) {
+            throw error;
+        
+        }
+    }
+
 // Método para actualizar un usuario existente
     static async actualizar(id, datosActualizados) {
         try {

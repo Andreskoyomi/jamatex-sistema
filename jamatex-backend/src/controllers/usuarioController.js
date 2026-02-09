@@ -1,4 +1,5 @@
 const Usuario = require ('../models/usuarioModel');
+const bcrypt = require ('bcrypt');
 
 //Objeto que contendrá todas nuestras funciones de control
 const usuarioController = {
@@ -17,13 +18,16 @@ const usuarioController = {
     crearUsuario: async (req, res) => {
         try {
             const datos = req.body; // Aquí llega lo que el usuario envió
+            //Hashear la contraseña
+            const saltRounds = 10;
+            datos.contrasena = await bcrypt.hash(datos.contrasena, saltRounds);
             const resultado = await Usuario.crear(datos);
             res.status(201).json({
                 mensaje: 'Usuario creado con éxito' ,
                 id: resultado.insertId
             });
         } catch (error) {
-            res.status(500).jason({ error: 'Error al crear usuario'});
+            res.status(500).json({ error: 'Error al crear usuario' });
         }
         
     },
