@@ -15,21 +15,25 @@ const usuarioController = {
     },
 
     //Función para crear usuario
-    crearUsuario: async (req, res) => {
+        crearUsuario: async (req, res) => {
         try {
-            const datos = req.body; // Aquí llega lo que el usuario envió
-            //Hashear la contraseña
+            const datos = req.body; 
+
+            // --- ESTA ES LA LÍNEA CLAVE ---
+            // Como tu tabla no acepta NULL en 'estado', se lo asignamos aquí.
+            // 1 significa 'Activo'.
+            datos.estado = 1; 
+
             const saltRounds = 10;
+            // Asegúrate que 'contrasena' coincida con el nombre que pusiste en Android
             datos.contrasena = await bcrypt.hash(datos.contrasena, saltRounds);
+            
             const resultado = await Usuario.crear(datos);
-            res.status(201).json({
-                mensaje: 'Usuario creado con éxito' ,
-                id: resultado.insertId
-            });
+            res.status(201).json({ mensaje: 'Usuario creado con éxito' });
         } catch (error) {
-            res.status(500).json({ error: 'Error al crear usuario' });
+            console.error("Error detallado:", error); 
+            res.status(500).json({ error: 'Error al insertar en la base de datos' });
         }
-        
     },
 
     // Función para consultar usuario por ID
@@ -50,16 +54,22 @@ const usuarioController = {
     },
 
     //Función para actualizar usuario
-    actualizarUsuario: async (req, res)=> {
-        try {
-            const { id } = req.params; //Capturamos el ID de la URL
-            const datos = req.body;
-            await Usuario.actualizar(id, datos)
-            res.json({ mensaje: 'Usuario actualizado correctamente'});    
-        } catch (error) {
-            res.status(500).json({ error: 'Error al actualizar el usuario'});
-        }
-    },
+    actualizarUsuario: async (req, res) => {
+    try {
+        const { id } = req.params; 
+        const datos = req.body;
+
+        // Agregamos este console.log para ver qué está llegando desde el celular
+        console.log("Datos recibidos para actualizar:", datos);
+
+        await Usuario.actualizar(id, datos);
+        res.json({ mensaje: 'Usuario actualizado correctamente'});    
+    } catch (error) {
+        // MUY IMPORTANTE: Imprime el error real en la consola de Node para saber qué falló
+        console.error("Error detallado:", error); 
+        res.status(500).json({ error: 'Error al actualizar el usuario', detalle: error.message });
+    }
+},
 
     //Funcion para eliminar usuario
     eliminarUsuario: async (req, res) => {

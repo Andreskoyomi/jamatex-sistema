@@ -51,27 +51,32 @@ class Usuario {
         }
     }
 
-// Método para actualizar un usuario existente
-    static async actualizar(id, datosActualizados) {
+// Método para actualizar un usuario existente (Flexible)
+    static async actualizar(id, datos) {
         try {
-            const { nombre, correo, contrasena, rol, estado } = datosActualizados;
-            const query = `
-                UPDATE usuario 
-                SET nombre = ?, correo = ?, contrasena = ?, rol = ?, estado = ? 
-                WHERE id_usuario = ?
-            `;
-            // El ID va al final porque es el último "?" en la consulta SQL
-            const [resultado] = await db.query(query, [nombre, correo, contrasena, rol, estado, id]);
+            // Buscamos qué campos vienen en el objeto 'datos'
+            const campos = Object.keys(datos); // Ejemplo: ['estado']
+            const valores = Object.values(datos); // Ejemplo: [0]
+
+            // Creamos la parte del SET dinámicamente: "nombre = ?, correo = ?"
+            const setQuery = campos.map(campo => `${campo} = ?`).join(', ');
+
+            const query = `UPDATE usuario SET ${setQuery} WHERE id_usuario = ?`;
+            
+            // Agregamos el ID al final del arreglo de valores
+            const [resultado] = await db.query(query, [...valores, id]);
+            
             return resultado;
         } catch (error) {
             throw error;
         }
     }
 
-// Método para eliminar un usuario
+// Método para "eliminar" (Borrado Lógico)
     static async eliminar(id) {
         try {
-            const query = 'DELETE FROM usuario WHERE id_usuario = ?';
+            // En lugar de DELETE, hacemos un UPDATE
+            const query = 'UPDATE usuario SET estado = 0 WHERE id_usuario = ?';
             const [resultado] = await db.query(query, [id]);
             return resultado;
         } catch (error) {
